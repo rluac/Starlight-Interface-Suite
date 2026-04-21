@@ -121,8 +121,12 @@ local GuiService = GetService("GuiService")
 local MarketplaceService = GetService("MarketplaceService")
 local ReplicatedStorage = GetService("ReplicatedStorage")
 local ContentProvider = GetService("ContentProvider")
-local InputManager = GetService("VirtualInputManager")
 local CoreGui = GetService("CoreGui")
+local InputManager
+
+if not getgenv().SecureMode then
+	InputManager = GetService("VirtualInputManager")
+end
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -1522,27 +1526,28 @@ local function Hide(Interface, JustHide: boolean?, Notify: boolean?, Bind: strin
 			Tween(Interface, { Transparency = 1 })
 		end
 	end
-	
+
 	-- hide popups
-	if not isStudio and Starlight.Instance.MobileToggle.Visible then
-		InputManager:SendTouchEvent(
-			0, 0, 0, 0
-		)
-
-		InputManager:SendTouchEvent(
-			0, 2, 0, 0
-		)
-	elseif not isStudio then
-		InputManager:SendMouseButtonEvent(
-			0, 0, 0, true, game, 0
-		)
-
-		InputManager:SendMouseButtonEvent(
-			0, 0, 0, false, game, 0
-		)
+	if InputManager then
+		if not isStudio and Starlight.Instance.MobileToggle.Visible then
+			InputManager:SendTouchEvent(
+				0, 0, 0, 0
+			)
+	
+			InputManager:SendTouchEvent(
+				0, 2, 0, 0
+			)
+		elseif not isStudio then
+			InputManager:SendMouseButtonEvent(
+				0, 0, 0, true, game, 0
+			)
+	
+			InputManager:SendMouseButtonEvent(
+				0, 0, 0, false, game, 0
+			)
+		end
 	end
-
-
+	
 	task.wait(0.18)
 	if Interface.ClassName == "ScreenGui" then
 		Interface.Enabled = false
